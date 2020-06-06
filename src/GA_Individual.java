@@ -1,3 +1,5 @@
+import java.util.Random;
+
 public class GA_Individual {
 
     /**
@@ -25,19 +27,11 @@ public class GA_Individual {
      */
     public GA_Individual(int chromosomeLength) {
         // Create random individual
-        int[] individual;
-        individual = new int[chromosomeLength];
-
-        /**
-         * In this case, we can no longer simply pick 0s and 1s -- we need to
-         * use every city index available. We also don't need to randomize or
-         * shuffle this chromosome, as crossover and mutation will ultimately
-         * take care of that for us.
-         */
+        int[] individual = new int[chromosomeLength];
+        Random r = new Random();
         for (int gene = 0; gene < chromosomeLength; gene++) {
-            individual[gene] = gene;
+            individual[gene] = r.nextInt(2); // assign kru maskapai ke 3 pesawat (unik)
         }
-
         this.chromosome = individual;
     }
 

@@ -9,25 +9,20 @@
  */
 
 public class Schedule {
-    private Plane[] planes;
-    private double distance = 0;
+    private int[] chromosome,crews_total_days_left;
 
     /**
      * Initialize Route
      *
      * @param individual
      *            A GA individual
-     * @param crews
+     * @param crews_total_days_left
      *            The crews referenced
      */
-    public Schedule(GA_Individual individual, Crew crews[]) {
+    public Schedule(GA_Individual individual, int[] crews_total_days_left) {
         // Get individual's chromosome
-        int chromosome[] = individual.getChromosome();
-        // Create route
-        this.schedule = new Crew[crews.length];
-        for (int geneIndex = 0; geneIndex < chromosome.length; geneIndex++) {
-            this.schedule[geneIndex] = crews[chromosome[geneIndex]];
-        }
+        this.chromosome = individual.getChromosome();
+        this.crews_total_days_left = crews_total_days_left;
     }
 
     /**
@@ -35,20 +30,29 @@ public class Schedule {
      *
      * @return distance The route's distance
      */
-    public double getDistance() {
-        if (this.distance > 0) {
-            return this.distance;
+    public double getFitnessScore() {
+        int total = 0;
+        for (int i = 0; i < this.chromosome.length; i++) {
+            try {
+                if(crews_total_days_left[chromosome[i]-1] == 0){
+                    total = 0;
+                    break;
+                }
+                else{
+                    total+= crews_total_days_left[chromosome[i]-1];
+                    crews_total_days_left[chromosome[i]-1]-=1;
+                }
+            }
+            catch (Exception e){
+                System.out.println();
+            }
+
+
         }
+        return total;
+    }
 
-        // Loop over cities in route and calculate route distance
-        double totalDistance = 0;
-        for (int cityIndex = 0; cityIndex + 1 < this.schedule.length; cityIndex++) {
-            totalDistance += this.schedule[cityIndex].distanceFrom(this.schedule[cityIndex + 1]);
-        }
-
-        totalDistance += this.schedule[this.schedule.length - 1].distanceFrom(this.schedule[0]);
-        this.distance = totalDistance;
-
-        return totalDistance;
+    public int[] getChromosome() {
+        return chromosome;
     }
 }

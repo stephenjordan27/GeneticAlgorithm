@@ -58,10 +58,10 @@ public class GA_Algorithm {
      *            the cities being referenced
      * @return double The fitness value for individual
      */
-    public double calcFitness(GA_Individual individual, Crew crews[]){
+    public double calcFitness(GA_Individual individual, int[] crews_total_days_left){
         // Get fitness
-        Schedule plane = new Schedule(individual, crews);
-        double fitness = 1 / route.getDistance();
+        Schedule schedule = new Schedule(individual, crews_total_days_left);
+        double fitness = schedule.getFitnessScore();
 
         // Store fitness
         individual.setFitness(fitness);
@@ -75,15 +75,25 @@ public class GA_Algorithm {
      * @param population the population to evaluate
      * @param cities the cities being referenced
      */
-    public void evalPopulation(GA_Population population, Crew crews[]){
+    public void evalPopulation(GA_Population population, int[] crews_total_days_left){
         double populationFitness = 0;
-
+        int size = 0;
         // Loop over population evaluating individuals and summing population fitness
         for (GA_Individual individual : population.getIndividuals()) {
-            populationFitness += this.calcFitness(individual, cities);
+            populationFitness += this.calcFitness(individual,crews_total_days_left);
+            int total = 0;
+            for (int i = 0; i < crews_total_days_left.length; i++) {
+                total+= crews_total_days_left[i];
+            }
+            if(total <= 2){
+                break;
+            }
+            else{
+                size++;
+            }
         }
 
-        double avgFitness = populationFitness / population.size();
+        double avgFitness = populationFitness / size;
         population.setPopulationFitness(avgFitness);
     }
 

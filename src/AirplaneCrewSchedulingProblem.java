@@ -1,3 +1,4 @@
+import java.util.Arrays;
 import java.util.Random;
 
 /**
@@ -19,58 +20,28 @@ public class AirplaneCrewSchedulingProblem {
     public static void main(String[] args) {
         // Create cities
         int numCrews = 5;
-        int numDays = 10;
         int numPlanes = 3;
+        int condition_day = 2;
 
-        Crew[] crews = new Crew[numCrews];
-        Schedule[] schedules = new Schedule[numDays];
-        Random random = new Random();
-
-        for (int i = 0; i < numCrews; i++) {
-            crews[i] = new Crew("Crew "+ (i+1) );
-        }
-
-        for (int i = 0; i < numDays; i++) { // untuk setiap schedule
-            Plane[] planes = new Plane[numPlanes];
-            for (int j = 0; j < numPlanes; j++) { // buat n pesawat dengan 1 kru
-               planes[i] = new Plane(crews[random.nextInt(numCrews)]); // kru dirandom kru (0-4)
-            }
-            schedules[i] = new schedules(planes);
-        }
-
-
-
-
-        for(int dayIndex = 0; dayIndex < numDays; dayIndex++) {
-            workingday[dayIndex] = random.nextInt(numCrews+1)+1;
-        }
-
-        // Loop to create random cities
-        for (int crewIndex = 0; crewIndex < numCrews; crewIndex++) {
-
-            // Add city
-            crews[crewIndex] = new Crew(xPos, yPos);
+        int[] crews_total_days_left = new int[numCrews];
+        for (int i = 0; i < crews_total_days_left.length; i++) {
+            crews_total_days_left[i] = condition_day;
         }
 
         // Initial GA
-        GA_Algorithm ga = new GA_Algorithm(100, 0.001, 0.9, 2, 5);
+        GA_Algorithm ga = new GA_Algorithm(10, 0.001, 0.9, 2, 5);
 
         // Initialize population
-        GA_Population population = ga.initPopulation(crews.length);
-
-        // Evaluate population
-        ga.evalPopulation(population, crews);
-
-        Schedule startRoute = new Schedule(population.getFittest(0), crews);
-        System.out.println("Start Distance: " + startRoute.getDistance());
+        GA_Population population = ga.initPopulation(numCrews);
 
         // Keep track of current generation
         int generation = 1;
         // Start evolution loop
         while (ga.isTerminationConditionMet(generation, maxGenerations) == false) {
             // Print fittest individual from population
-            Schedule schedule = new Schedule(population.getFittest(0), crews);
-            System.out.println("G"+generation+" Best distance: " + plane.getDistance());
+            Schedule schedule = new Schedule(population.getFittest(0),crews_total_days_left);
+            System.out.println("G"+generation+", Fitness score: " + schedule.getFitnessScore() +
+                    ", Chromosome: " + Arrays.toString(schedule.getChromosome()));
 
             // Apply crossover
             population = ga.crossoverPopulation(population);
@@ -79,15 +50,15 @@ public class AirplaneCrewSchedulingProblem {
             population = ga.mutatePopulation(population);
 
             // Evaluate population
-            ga.evalPopulation(population, crews);
+            ga.evalPopulation(population, crews_total_days_left);
 
             // Increment the current generation
             generation++;
         }
 
         System.out.println("Stopped after " + maxGenerations + " generations.");
-        Schedule route = new Schedule(population.getFittest(0), crews);
-        System.out.println("Best distance: " + route.getDistance());
+//        Schedule route = new Schedule(population.getFittest(0), crews);
+//        System.out.println("Best distance: " + route.getDistance());
 
     }
 }
