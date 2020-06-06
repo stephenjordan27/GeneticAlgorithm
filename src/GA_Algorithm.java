@@ -1,6 +1,6 @@
 import java.util.Arrays;
 
-public class GeneticAlgorithm {
+public class GA_Algorithm {
 
     private int populationSize;
     private double mutationRate;
@@ -8,7 +8,7 @@ public class GeneticAlgorithm {
     private int elitismCount;
     protected int tournamentSize;
 
-    public GeneticAlgorithm(int populationSize, double mutationRate, double crossoverRate, int elitismCount,
+    public GA_Algorithm(int populationSize, double mutationRate, double crossoverRate, int elitismCount,
                             int tournamentSize) {
 
         this.populationSize = populationSize;
@@ -25,9 +25,9 @@ public class GeneticAlgorithm {
      * @param chromosomeLength The length of the individuals chromosome
      * @return population The initial population generated
      */
-    public Population initPopulation(int chromosomeLength){
+    public GA_Population initPopulation(int chromosomeLength){
         // Initialize population
-        Population population = new Population(this.populationSize, chromosomeLength);
+        GA_Population population = new GA_Population(this.populationSize, chromosomeLength);
         return population;
     }
 
@@ -58,9 +58,9 @@ public class GeneticAlgorithm {
      *            the cities being referenced
      * @return double The fitness value for individual
      */
-    public double calcFitness(Individual individual, City cities[]){
+    public double calcFitness(GA_Individual individual, Crew crews[]){
         // Get fitness
-        Route route = new Route(individual, cities);
+        Schedule plane = new Schedule(individual, crews);
         double fitness = 1 / route.getDistance();
 
         // Store fitness
@@ -75,11 +75,11 @@ public class GeneticAlgorithm {
      * @param population the population to evaluate
      * @param cities the cities being referenced
      */
-    public void evalPopulation(Population population, City cities[]){
+    public void evalPopulation(GA_Population population, Crew crews[]){
         double populationFitness = 0;
 
         // Loop over population evaluating individuals and summing population fitness
-        for (Individual individual : population.getIndividuals()) {
+        for (GA_Individual individual : population.getIndividuals()) {
             populationFitness += this.calcFitness(individual, cities);
         }
 
@@ -96,14 +96,14 @@ public class GeneticAlgorithm {
      *
      * @return The individual selected as a parent
      */
-    public Individual selectParent(Population population) {
+    public GA_Individual selectParent(GA_Population population) {
         // Create tournament
-        Population tournament = new Population(this.tournamentSize);
+        GA_Population tournament = new GA_Population(this.tournamentSize);
 
         // Add random individuals to the tournament
         population.shuffle();
         for (int i = 0; i < this.tournamentSize; i++) {
-            Individual tournamentIndividual = population.getIndividual(i);
+            GA_Individual tournamentIndividual = population.getIndividual(i);
             tournament.setIndividual(i, tournamentIndividual);
         }
 
@@ -133,24 +133,24 @@ public class GeneticAlgorithm {
      * @param population
      * @return The new population
      */
-    public Population crossoverPopulation(Population population){
+    public GA_Population crossoverPopulation(GA_Population population){
         // Create new population
-        Population newPopulation = new Population(population.size());
+        GA_Population newPopulation = new GA_Population(population.size());
 
         // Loop over current population by fitness
         for (int populationIndex = 0; populationIndex < population.size(); populationIndex++) {
             // Get parent1
-            Individual parent1 = population.getFittest(populationIndex);
+            GA_Individual parent1 = population.getFittest(populationIndex);
 
             // Apply crossover to this individual?
             if (this.crossoverRate > Math.random() && populationIndex >= this.elitismCount) {
                 // Find parent2 with tournament selection
-                Individual parent2 = this.selectParent(population);
+                GA_Individual parent2 = this.selectParent(population);
 
                 // Create blank offspring chromosome
                 int offspringChromosome[] = new int[parent1.getChromosomeLength()];
                 Arrays.fill(offspringChromosome, -1);
-                Individual offspring = new Individual(offspringChromosome);
+                GA_Individual offspring = new GA_Individual(offspringChromosome);
 
                 // Get subset of parent chromosomes
                 int substrPos1 = (int) (Math.random() * parent1.getChromosomeLength());
@@ -207,13 +207,13 @@ public class GeneticAlgorithm {
      *            The population to apply mutation to
      * @return The mutated population
      */
-    public Population mutatePopulation(Population population){
+    public GA_Population mutatePopulation(GA_Population population){
         // Initialize new population
-        Population newPopulation = new Population(this.populationSize);
+        GA_Population newPopulation = new GA_Population(this.populationSize);
 
         // Loop over current population by fitness
         for (int populationIndex = 0; populationIndex < population.size(); populationIndex++) {
-            Individual individual = population.getFittest(populationIndex);
+            GA_Individual individual = population.getFittest(populationIndex);
 
             // Skip mutation if this is an elite individual
             if (populationIndex >= this.elitismCount) {

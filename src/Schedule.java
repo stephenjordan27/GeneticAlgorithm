@@ -8,8 +8,8 @@
  *
  */
 
-public class Route {
-    private City route[];
+public class Schedule {
+    private Plane[] planes;
     private double distance = 0;
 
     /**
@@ -17,16 +17,16 @@ public class Route {
      *
      * @param individual
      *            A GA individual
-     * @param cities
-     *            The cities referenced
+     * @param crews
+     *            The crews referenced
      */
-    public Route(Individual individual, City cities[]) {
+    public Schedule(GA_Individual individual, Crew crews[]) {
         // Get individual's chromosome
         int chromosome[] = individual.getChromosome();
         // Create route
-        this.route = new City[cities.length];
+        this.schedule = new Crew[crews.length];
         for (int geneIndex = 0; geneIndex < chromosome.length; geneIndex++) {
-            this.route[geneIndex] = cities[chromosome[geneIndex]];
+            this.schedule[geneIndex] = crews[chromosome[geneIndex]];
         }
     }
 
@@ -42,11 +42,11 @@ public class Route {
 
         // Loop over cities in route and calculate route distance
         double totalDistance = 0;
-        for (int cityIndex = 0; cityIndex + 1 < this.route.length; cityIndex++) {
-            totalDistance += this.route[cityIndex].distanceFrom(this.route[cityIndex + 1]);
+        for (int cityIndex = 0; cityIndex + 1 < this.schedule.length; cityIndex++) {
+            totalDistance += this.schedule[cityIndex].distanceFrom(this.schedule[cityIndex + 1]);
         }
 
-        totalDistance += this.route[this.route.length - 1].distanceFrom(this.route[0]);
+        totalDistance += this.schedule[this.schedule.length - 1].distanceFrom(this.schedule[0]);
         this.distance = totalDistance;
 
         return totalDistance;

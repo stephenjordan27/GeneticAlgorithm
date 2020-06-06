@@ -2,8 +2,8 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Random;
 
-public class Population {
-    private Individual population[];
+public class GA_Population {
+    private GA_Individual population[];
     private double populationFitness = -1;
 
     /**
@@ -12,9 +12,9 @@ public class Population {
      * @param populationSize
      *            The size of the population
      */
-    public Population(int populationSize) {
+    public GA_Population(int populationSize) {
         // Initial population
-        this.population = new Individual[populationSize];
+        this.population = new GA_Individual[populationSize];
     }
 
     /**
@@ -25,14 +25,14 @@ public class Population {
      * @param chromosomeLength
      *            The length of the individuals chromosome
      */
-    public Population(int populationSize, int chromosomeLength) {
+    public GA_Population(int populationSize, int chromosomeLength) {
         // Initial population
-        this.population = new Individual[populationSize];
+        this.population = new GA_Individual[populationSize];
 
         // Loop over population size
         for (int individualCount = 0; individualCount < populationSize; individualCount++) {
             // Create individual
-            Individual individual = new Individual(chromosomeLength);
+            GA_Individual individual = new GA_Individual(chromosomeLength);
             // Add individual to population
             this.population[individualCount] = individual;
         }
@@ -43,7 +43,7 @@ public class Population {
      *
      * @return individuals Individuals in population
      */
-    public Individual[] getIndividuals() {
+    public GA_Individual[] getIndividuals() {
         return this.population;
     }
 
@@ -53,11 +53,11 @@ public class Population {
      * @param offset
      * @return individual Fittest individual at offset
      */
-    public Individual getFittest(int offset) {
+    public GA_Individual getFittest(int offset) {
         // Order population by fitness
-        Arrays.sort(this.population, new Comparator<Individual>() {
+        Arrays.sort(this.population, new Comparator<GA_Individual>() {
             @Override
-            public int compare(Individual o1, Individual o2) {
+            public int compare(GA_Individual o1, GA_Individual o2) {
                 if (o1.getFitness() > o2.getFitness()) {
                     return -1;
                 } else if (o1.getFitness() < o2.getFitness()) {
@@ -106,7 +106,7 @@ public class Population {
      * @param offset
      * @return individual
      */
-    public Individual setIndividual(int offset, Individual individual) {
+    public GA_Individual setIndividual(int offset, GA_Individual individual) {
         return population[offset] = individual;
     }
 
@@ -116,7 +116,7 @@ public class Population {
      * @param offset
      * @return individual
      */
-    public Individual getIndividual(int offset) {
+    public GA_Individual getIndividual(int offset) {
         return population[offset];
     }
 
@@ -130,7 +130,7 @@ public class Population {
         Random rnd = new Random();
         for (int i = population.length - 1; i > 0; i--) {
             int index = rnd.nextInt(i + 1);
-            Individual a = population[index];
+            GA_Individual a = population[index];
             population[index] = population[i];
             population[i] = a;
         }

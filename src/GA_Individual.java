@@ -1,4 +1,4 @@
-public class Individual {
+public class GA_Individual {
 
     /**
      * In this case, the chromosome is an array of integers rather than a string.
@@ -12,7 +12,7 @@ public class Individual {
      * @param chromosome
      *            The chromosome to give individual
      */
-    public Individual(int[] chromosome) {
+    public GA_Individual(int[] chromosome) {
         // Create individualchromosome
         this.chromosome = chromosome;
     }
@@ -23,7 +23,7 @@ public class Individual {
      * @param chromosomeLength
      *            The length of the individuals chromosome
      */
-    public Individual(int chromosomeLength) {
+    public GA_Individual(int chromosomeLength) {
         // Create random individual
         int[] individual;
         individual = new int[chromosomeLength];
