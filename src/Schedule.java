@@ -10,6 +10,7 @@
 
 public class Schedule {
     private int[] chromosome,crews_total_days_left;
+    private int fitness_score;
 
     /**
      * Initialize Route
@@ -23,6 +24,7 @@ public class Schedule {
         // Get individual's chromosome
         this.chromosome = individual.getChromosome();
         this.crews_total_days_left = crews_total_days_left;
+        this.fitness_score = 20;
     }
 
     /**
@@ -30,26 +32,19 @@ public class Schedule {
      *
      * @return distance The route's distance
      */
-    public double getFitnessScore() {
+    public int calcFitnessScore() {
         int total = 0;
         for (int i = 0; i < this.chromosome.length; i++) {
-            try {
-                if(crews_total_days_left[chromosome[i]-1] == 0){
-                    total = 0;
-                    break;
-                }
-                else{
-                    total+= crews_total_days_left[chromosome[i]-1];
-                    crews_total_days_left[chromosome[i]-1]-=1;
-                }
+            if(chromosome[i] == 1){
+                total += crews_total_days_left[i];
             }
-            catch (Exception e){
-                System.out.println();
-            }
-
-
         }
+        this.fitness_score = total;
         return total;
+    }
+
+    public int getFitnessScore() {
+        return fitness_score;
     }
 
     public int[] getChromosome() {

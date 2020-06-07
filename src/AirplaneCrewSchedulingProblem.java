@@ -1,26 +1,13 @@
 import java.util.Arrays;
 import java.util.Random;
 
-/**
- * Main, executive class for the Traveling Salesman Problem.
- *
- * We don't have a real list of cities, so we randomly generate a number of them
- * on a 100x100 map.
- *
- * The TSP requires that each city is visited once and only once, so we have to
- * be careful when initializing a random Individual and also when applying
- * crossover and mutation. Check out the GeneticAlgorithm class for
- * implementations of crossover and mutation for this problem.
- *
- * @author bkanber
- *
- */
+
 public class AirplaneCrewSchedulingProblem {
-    public static int maxGenerations = 10000;
+
     public static void main(String[] args) {
-        // Create cities
-        int numCrews = 5;
-        int numPlanes = 3;
+        int totalWorking = 25;
+        int numCrews = 6;
+        int numPlanes = 4;
         int condition_day = 2;
 
         int[] crews_total_days_left = new int[numCrews];
@@ -29,36 +16,89 @@ public class AirplaneCrewSchedulingProblem {
         }
 
         // Initial GA
-        GA_Algorithm ga = new GA_Algorithm(10, 0.001, 0.9, 2, 5);
+        Kombinasi k = new Kombinasi(numCrews,numPlanes);
+        GA_Algorithm ga = new GA_Algorithm(k.calcNumberSolution(), 0, 0, 2, 5);
 
         // Initialize population
-        GA_Population population = ga.initPopulation(numCrews);
+        GA_Population population = ga.initPopulation(numCrews, numPlanes, condition_day);
 
         // Keep track of current generation
         int generation = 1;
+        int[] temp_crews_total_days_left = crews_total_days_left;
+        int[] temp_working_days_in_a_row = new int[numCrews];
+
         // Start evolution loop
-        while (ga.isTerminationConditionMet(generation, maxGenerations) == false) {
-            // Print fittest individual from population
-            Schedule schedule = new Schedule(population.getFittest(0),crews_total_days_left);
-            System.out.println("G"+generation+", Fitness score: " + schedule.getFitnessScore() +
-                    ", Chromosome: " + Arrays.toString(schedule.getChromosome()));
-
-            // Apply crossover
-            population = ga.crossoverPopulation(population);
-
-            // Apply mutation
-            population = ga.mutatePopulation(population);
+        do {
+            int total = 0;
+            for (int i = 0; i < crews_total_days_left.length; i++) {
+                total+= crews_total_days_left[i];
+            }
+            if(total <= 2){
+                for (int i = 0; i < crews_total_days_left.length; i++) {
+                    crews_total_days_left[i] = condition_day;
+                }
+            }
 
             // Evaluate population
             ga.evalPopulation(population, crews_total_days_left);
 
+            GA_Individual best = null;
+
+            best = population.getFittest(0);
+            for (int i = 0; i < best.getChromosome().length; i++) {
+                temp_working_days_in_a_row[i] += best.getChromosome()[i];
+            }
+            int numPlanesFill = 0;
+
+            for (int i = 0; i < temp_working_days_in_a_row.length; i++) {
+                if(temp_working_days_in_a_row[i] < numPlanes){
+                    numPlanesFill++;
+                }
+            }
+            if(numPlanesFill < numPlanes) break;
+
+            if(generation > 2){
+                boolean overlimit = false;
+                for (int i = 0; i < temp_working_days_in_a_row.length; i++) {
+                    if (temp_working_days_in_a_row[i] == 3) {
+                        overlimit = true;
+                        break;
+                    }
+                }
+                if(overlimit) {
+                    best = population.getFittest2(0, temp_working_days_in_a_row);
+                    for (int i = 0; i < best.getChromosome().length; i++) {
+                        temp_working_days_in_a_row[i] = best.getChromosome()[i];
+                    }
+                }
+            }
+
+
+            System.out.println("Day "+generation+", Fitness score: " + population.getPopulationFitness() +
+                    ", Chromosome: " + Arrays.toString(best.getChromosome()));
+
+            for (int i = 0; i < best.getChromosome().length; i++) {
+                if(best.getChromosome()[i]==1){
+                    temp_crews_total_days_left[i] -= 1;
+                }
+            }
+
+
+
+            crews_total_days_left = temp_crews_total_days_left;
+
+
+
+            // Apply crossover
+            population = ga.crossoverPopulation(population,numPlanes,condition_day);
+
+            // Apply mutation
+            population = ga.mutatePopulation(population);
+
             // Increment the current generation
             generation++;
         }
-
-        System.out.println("Stopped after " + maxGenerations + " generations.");
-//        Schedule route = new Schedule(population.getFittest(0), crews);
-//        System.out.println("Best distance: " + route.getDistance());
+        while (ga.isTerminationConditionMet(generation, totalWorking) == false);
 
     }
 }

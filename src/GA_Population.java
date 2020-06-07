@@ -6,55 +6,19 @@ public class GA_Population {
     private GA_Individual population[];
     private double populationFitness = -1;
 
-    /**
-     * Initializes blank population of individuals
-     *
-     * @param populationSize
-     *            The size of the population
-     */
     public GA_Population(int populationSize) {
-        // Initial population
         this.population = new GA_Individual[populationSize];
     }
 
-    /**
-     * Initializes population of individuals
-     *
-     * @param populationSize
-     *            The size of the population
-     * @param chromosomeLength
-     *            The length of the individuals chromosome
-     */
-    public GA_Population(int populationSize, int chromosomeLength) {
-        // Initial population
+    public GA_Population(int populationSize, int chromosomeLength, int numPlanes, int condition_day) {
         this.population = new GA_Individual[populationSize];
-
-        // Loop over population size
         for (int individualCount = 0; individualCount < populationSize; individualCount++) {
-            // Create individual
-            GA_Individual individual = new GA_Individual(chromosomeLength);
-            // Add individual to population
+            GA_Individual individual = new GA_Individual(chromosomeLength, numPlanes, condition_day,individualCount);
             this.population[individualCount] = individual;
         }
     }
 
-    /**
-     * Get individuals from the population
-     *
-     * @return individuals Individuals in population
-     */
-    public GA_Individual[] getIndividuals() {
-        return this.population;
-    }
-
-    /**
-     * Find fittest individual in the population
-     *
-     * @param offset
-     * @return individual Fittest individual at offset
-     */
     public GA_Individual getFittest(int offset) {
-        // Order population by fitness
         Arrays.sort(this.population, new Comparator<GA_Individual>() {
             @Override
             public int compare(GA_Individual o1, GA_Individual o2) {
@@ -66,66 +30,34 @@ public class GA_Population {
                 return 0;
             }
         });
-
-        // Return the fittest individual
+        setPopulationFitness(this.population[offset].getFitness());
         return this.population[offset];
     }
 
-    /**
-     * Set population's fitness
-     *
-     * @param fitness
-     *            The population's total fitness
-     */
-    public void setPopulationFitness(double fitness) {
-        this.populationFitness = fitness;
+    public GA_Individual getFittest2(int offset,int[] temp_working_days_in_a_row) {
+        Arrays.sort(this.population, new Comparator<GA_Individual>() {
+            @Override
+            public int compare(GA_Individual o1, GA_Individual o2) {
+                for (int i = 0; i < temp_working_days_in_a_row.length; i++) {
+                    if(temp_working_days_in_a_row[i] == 3){
+                        if (o1.getChromosome()[i] == 1 && o2.getChromosome()[i] != 1) {
+                            return 1;
+                        }
+                        else if (o1.getChromosome()[i] != 1 && o2.getChromosome()[i] == 1) {
+                            return -1;
+                        }
+                        else{
+                            return 1;
+                        }
+                    }
+                }
+                return 0;
+            }
+        });
+        setPopulationFitness(this.population[offset].getFitness());
+        return this.population[offset];
     }
 
-    /**
-     * Get population's fitness
-     *
-     * @return populationFitness The population's total fitness
-     */
-    public double getPopulationFitness() {
-        return this.populationFitness;
-    }
-
-    /**
-     * Get population's size
-     *
-     * @return size The population's size
-     */
-    public int size() {
-        return this.population.length;
-    }
-
-    /**
-     * Set individual at offset
-     *
-     * @param individual
-     * @param offset
-     * @return individual
-     */
-    public GA_Individual setIndividual(int offset, GA_Individual individual) {
-        return population[offset] = individual;
-    }
-
-    /**
-     * Get individual at offset
-     *
-     * @param offset
-     * @return individual
-     */
-    public GA_Individual getIndividual(int offset) {
-        return population[offset];
-    }
-
-    /**
-     * Shuffles the population in-place
-     *
-     * @param void
-     * @return void
-     */
     public void shuffle() {
         Random rnd = new Random();
         for (int i = population.length - 1; i > 0; i--) {
@@ -135,5 +67,24 @@ public class GA_Population {
             population[i] = a;
         }
     }
+
+    public GA_Individual[] getIndividuals() { return this.population; }
+    public void setPopulationFitness(double fitness) {
+        this.populationFitness = fitness;
+    }
+    public double getPopulationFitness() {
+        return this.populationFitness;
+    }
+    public int size() {
+        return this.population.length;
+    }
+    public GA_Individual setIndividual(int offset, GA_Individual individual) {
+        return population[offset] = individual;
+    }
+    public GA_Individual getIndividual(int offset) {
+        return population[offset];
+    }
+
+
 
 }
