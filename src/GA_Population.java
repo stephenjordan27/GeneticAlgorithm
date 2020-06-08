@@ -47,7 +47,7 @@ public class GA_Population {
                             return -1;
                         }
                         else{
-                            return 1;
+                            return -1;
                         }
                     }
                 }

@@ -39,6 +39,8 @@ public class AirplaneCrewSchedulingProblem {
 
         // Start evolution loop
         do {
+            // Apabila total sisa hari kru maskapai lebih kecil dari jumlah pesawat,
+            // maka masing-masing kru akan diisi kembali sisa harinya dengan 2.
             int total = 0;
             for (int i = 0; i < crews_total_days_left.length; i++) {
                 total+= crews_total_days_left[i];
